@@ -74,6 +74,26 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
 
+  const promoteToAdmin = async (email: string): Promise<boolean> => {
+    if (!user || user.role !== 'admin') return false;
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // In a real app, this would call an API to update the user's role
+        const updatedUser = { ...user, role: 'admin' };
+        setUser(updatedUser);
+        localStorage.setItem('locUser', JSON.stringify(updatedUser));
+        
+        toast({
+          title: 'User promoted',
+          description: `${email} is now an admin`,
+        });
+        
+        resolve(true);
+      }, 1000);
+    });
+  };
+
   // Load user data from localStorage on initial load
   useEffect(() => {
     const storedUser = localStorage.getItem("locUser")
@@ -117,7 +137,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           lastName: "Doe",
           email: email,
           profileImage: "/placeholder.svg?height=200&width=200",
-          role: "participant",
+          role: email === "admin@example.com" ? "admin" : "participant",
           team: null,
           payment: {
             status: "unpaid",

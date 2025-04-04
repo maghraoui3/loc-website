@@ -34,8 +34,12 @@ export default function AdminLayout({
 
   // Check if user is admin, if not redirect to dashboard
   useEffect(() => {
-    if (!isLoading && user && user.role !== "admin") {
-      router.push("/dashboard")
+    if (!isLoading) {
+      if (!user) {
+        router.push("/login")
+      } else if (user.role !== "admin") {
+        router.push("/dashboard")
+      }
     }
   }, [user, isLoading, router])
 
